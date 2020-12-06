@@ -31,13 +31,13 @@ Yolov5::Yolov5(const std::string &modelPath, const int inputSize, const int numT
 void Yolov5::preprocess(cv::Mat &rawImg, cv::Mat &resizedImg)
 {
     int resizedHeight, resizedWidth;
-    m_iImgWidth = rawImg.rows;
-    m_iImgHeight = rawImg.cols;
+    m_iImgHeight = rawImg.rows;
+    m_iImgWidth = rawImg.cols;
 
     m_fRatio = std::min(1.0f * m_iInputSize / m_iImgWidth, 1.0f * m_iInputSize / m_iImgHeight);
 
-    resizedHeight = int(m_iImgWidth * m_fRatio);
-    resizedWidth = int(m_iImgHeight * m_fRatio);
+    resizedHeight = int(m_iImgHeight * m_fRatio);
+    resizedWidth = int(m_iImgWidth * m_fRatio);
 
     // odd number->pad size error
     if (resizedHeight % 2 != 0)
@@ -51,8 +51,8 @@ void Yolov5::preprocess(cv::Mat &rawImg, cv::Mat &resizedImg)
     cv::resize(rawImg, resizedImg, cv::Size(resizedWidth, resizedHeight), 0, 0, cv::INTER_LINEAR);
     cv::copyMakeBorder(resizedImg, resizedImg, m_iPad_H, m_iPad_H, m_iPad_W, m_iPad_W, cv::BORDER_CONSTANT, m_pad);
 
-    m_iPadedImgWidth = resizedImg.rows;
-    m_iPadedImgHeight = resizedImg.cols;
+    m_iPadedImgWidth = resizedImg.cols;
+    m_iPadedImgHeight = resizedImg.rows;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -215,8 +215,8 @@ cv::Mat Yolov5::drawDetResults(const cv::Mat &imgBGR, const std::vector<DetResul
 void Yolov5::scaleCoords(std::vector<DetResult> &vDetResults)
 {
     float gain = std::min(1.0f * m_iPadedImgWidth / float(m_iImgWidth), 1.0f * m_iPadedImgHeight / float(m_iImgHeight));
-    float padY = (m_iPadedImgWidth - m_iImgWidth * gain) / 2.0f;
-    float padX = (m_iPadedImgHeight - m_iImgHeight * gain) / 2.0f;
+    float padX = (m_iPadedImgWidth - m_iImgWidth * gain) / 2.0f;
+    float padY = (m_iPadedImgHeight - m_iImgHeight * gain) / 2.0f;
 
     for (auto &it : vDetResults)
     {
