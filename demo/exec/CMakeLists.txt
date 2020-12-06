@@ -12,3 +12,9 @@ target_link_libraries(segment.out ${MNN_DEPS})
 
 add_executable(expressDemo.out ${CMAKE_CURRENT_LIST_DIR}/expressDemo.cpp)
 target_link_libraries(expressDemo.out ${MNN_DEPS})
+
+add_executable(UltraFace.out ${CMAKE_CURRENT_LIST_DIR}/UltraFace.cpp)
+target_link_libraries(UltraFace.out ${MNN_DEPS} ${OpenCV_LIBS})
+
+add_executable(yolov5.out ${CMAKE_CURRENT_LIST_DIR}/yolov5.cpp)
+target_link_libraries(yolov5.out ${MNN_DEPS} ${OpenCV_LIBS})

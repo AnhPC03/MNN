@@ -268,6 +268,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "^Linux")
         include_directories(${aarch64_linux_include})
     endif()
 endif()
+find_package(OpenCV REQUIRED)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include/
                     ${CMAKE_CURRENT_LIST_DIR}/source/
                     ${CMAKE_CURRENT_LIST_DIR}/schema/current/
@@ -276,6 +277,7 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/include/
                     ${CMAKE_CURRENT_LIST_DIR}/3rd_party/half
                     ${CMAKE_CURRENT_LIST_DIR}/3rd_party/imageHelper
                     ${CMAKE_CURRENT_LIST_DIR}/3rd_party/OpenCLHeaders/
+                    ${OPENCV_INCLUDE_DIR}
                   )
 
 
@@ -395,7 +397,7 @@ if ((NOT (MSVC OR WIN32)) AND MNN_HIDDEN)
     endif()
 endif()
 if (NOT (MSVC OR WIN32))
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstrict-aliasing -ffunction-sections -fdata-sections -ffast-math -fno-rtti -fno-exceptions ")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstrict-aliasing -ffunction-sections -fdata-sections -ffast-math -frtti -fno-exceptions ")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstrict-aliasing -ffunction-sections -fdata-sections -ffast-math")
 endif()
 
