@@ -1,7 +1,7 @@
 /*******************************************************************************
  * References:
  * preprocess: https://github.com/AspenDove/MNN-YOLOv3
- * sort and nms: https://github.com/wlguan/MNN-yolov3
+ * nms: https://github.com/wlguan/MNN-yolov3
  * scaleCoords: https://github.com/ultralytics/yolov5/blob/8918e6347683e0f2a8a3d7ef93331001985f6560/utils/general.py#L159
 *******************************************************************************/
 
@@ -112,7 +112,8 @@ void Yolov5::detect(cv::Mat &resizedImg, std::vector<DetResult> &vDetResults)
     {
         std::vector<DetResult> &candidates = clsCandidates[i];
 
-        sortInplace(candidates);
+        // is it needed to sort?
+        std::sort(candidates.begin(), candidates.end(), std::greater<DetResult>());
 
         std::vector<int> pickedIndices;
         nms(candidates, pickedIndices);
@@ -154,41 +155,6 @@ void Yolov5::nms(const std::vector<DetResult> &vDetResults, std::vector<int> &pi
 
         if (keep)
             pickedIndices.push_back(i);
-    }
-}
-
-/*----------------------------------------------------------------------------*/
-void Yolov5::sortInplace(std::vector<DetResult> &vDetResults)
-{
-    if (vDetResults.empty())
-        return;
-
-    sortInplace(vDetResults, 0, vDetResults.size() - 1);
-}
-
-/*----------------------------------------------------------------------------*/
-void Yolov5::sortInplace(std::vector<DetResult> &vDetResults, int left, int right)
-{
-    int i = left;
-    int j = right;
-    float p = vDetResults[(left + right) / 2].fConf;
-
-    while (i <= j)
-    {
-        while (vDetResults[i].fConf > p)
-            i++;
-
-        while (vDetResults[j].fConf < p)
-            j--;
-
-        if (i <= j)
-        {
-            // swap
-            std::swap(vDetResults[i], vDetResults[j]);
-
-            i++;
-            j--;
-        }
     }
 }
 
@@ -273,10 +239,23 @@ int main(int argc, char **argv)
 
     rawImg = cv::imread(imgPath);
 
-    yolov5->preprocess(rawImg, resizedImg);
-    yolov5->detect(resizedImg, vDetResults);
-    yolov5->scaleCoords(vDetResults);
+    auto start = std::chrono::steady_clock::now();
+    int numLoops = 100;
+    for (int i = 0; i < numLoops; i++)
+    {
+        if (i == (numLoops - 1))
+            vDetResults.clear();
 
+        yolov5->preprocess(rawImg, resizedImg);
+        yolov5->detect(resizedImg, vDetResults);
+        yolov5->scaleCoords(vDetResults);
+    }
+
+    auto end = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    std::cout << "(preprocess + detect + postprocess) time: " << 1000 * elapsed.count() / float(numLoops) << " ms" << std::endl;
+
+    /* Viz */
     showedImg = yolov5->drawDetResults(rawImg, vDetResults);
     cv::imshow("yolov5", showedImg);
     cv::waitKey(0);

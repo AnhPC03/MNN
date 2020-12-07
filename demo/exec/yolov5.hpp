@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include <MNN/Interpreter.hpp>
 #include <MNN/MNNDefine.h>
@@ -18,6 +19,11 @@ struct DetResult
     cv::Rect_<float> cvfRect;
     int iLabel;
     float fConf;
+
+    bool operator>(const DetResult &strDetRet) const
+    {
+        return (fConf > strDetRet.fConf);
+    }
 };
 
 static std::vector<std::string> clsNames = {"product"};
@@ -34,8 +40,6 @@ public:
 
 private:
     void nms(const std::vector<DetResult> &vDetResults, std::vector<int> &pickedIndices);
-    void sortInplace(std::vector<DetResult> &vDetResults);
-    void sortInplace(std::vector<DetResult> &vDetResults, int left, int right);
     float calcIntersectArea(const DetResult &cDetRet1, const DetResult &cDetRet2);
     void clipBox(cv::Rect_<float> &cvfRect);
 
