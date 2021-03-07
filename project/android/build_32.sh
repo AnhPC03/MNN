@@ -9,6 +9,7 @@ cmake ../../../ \
 -DANDROID_TOOLCHAIN=clang \
 -DMNN_USE_LOGCAT=false \
 -DMNN_BUILD_FOR_ANDROID_COMMAND=true \
--DNATIVE_LIBRARY_OUTPUT=. -DNATIVE_INCLUDE_OUTPUT=. $1 $2 $3
+-DNATIVE_LIBRARY_OUTPUT=. -DNATIVE_INCLUDE_OUTPUT=. $1 $2 $3 \
+-DOpenCV_DIR=/home/anhpc03/opencv_build/opencv/build
 
 make -j4
